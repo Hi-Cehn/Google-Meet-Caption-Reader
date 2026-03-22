@@ -20,6 +20,7 @@ export default defineConfig({
       input: {
         background: resolve(__dirname, 'src/background.ts'),
         sidepanel: resolve(__dirname, 'index.html'),
+        scapler: resolve(__dirname, 'src/scalper.ts')
       },
       output: {
           entryFileNames: '[name].js',
