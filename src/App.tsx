@@ -1,8 +1,19 @@
-function App() {
-  function clickEvent() {
-    const textOutput = document.getElementById("outputArea") as HTMLTextAreaElement
+import { useState } from "react"
 
-    textOutput.value += "Test Output. \n" 
+function App() {
+  let [output, setOutput] = useState("")
+
+  async function clickEvent() {
+    const [tab] = await chrome.tabs.query({ active: true, currentWindow: true })
+    if (!tab?.id) return
+
+    const res = await chrome.tabs
+      .sendMessage(tab.id, {type: "START_SCALPING"})
+      .catch((_e) => {
+        console.log('No transcript on this page')
+      })
+
+    setOutput(output + JSON.stringify(res) + "\n")
   }
 
   return (
@@ -11,7 +22,7 @@ function App() {
         <button onClick={clickEvent}>Start</button>
       </center>
 
-      <textarea id="outputArea" readOnly cols={44} rows={50}/>
+      <textarea value={output} readOnly cols={44} rows={50}/>
     </div>
   )
 }
