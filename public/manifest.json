@@ -14,5 +14,8 @@
         "service_worker": "background.js",
         "type": "module"
     },
-    "side_panel": { "default_path": "index.html" }
+    "side_panel": { "default_path": "index.html" },
+    "content_scripts": [
+      { "matches": ["https://meet.google.com/*"], "js": ["scalper.js"], "run_at": "document_idle" }
+    ]
 }
