@@ -1,0 +1,18 @@
+{
+    "manifest_version": 3,
+    "name": "Google Meet Caption Reader",
+    "version": "1.0.0",
+    "description": "Extension to display captions in a text area to be copied.",
+    "permissions": ["tabs", "storage", "scripting", "activeTab", "sidePanel"],
+    "host_permissions": [
+        "<all_urls>"
+    ],
+    "action": {
+        "default_title": "Open Panel"
+    },
+    "background": {
+        "service_worker": "background.js",
+        "type": "module"
+    },
+    "side_panel": { "default_path": "index.html" }
+}
