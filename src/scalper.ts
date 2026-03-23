@@ -1,26 +1,34 @@
 
 // Variables
 let message: string
-let captionParent  = '.nMcdL'
+let captionParentTag  = '.nMcdL'
+let speakerIdTag = '.NWpY1d'
+let captionIdTag = '.ygicle'
 
-let captionGroupObserver: MutationObserver
+let captionGroupObserver: MutationObserver | null = null
 
 // Observer to find the parent of the caption element to be analyzed for speaker name and speaker caption
 captionGroupObserver = new MutationObserver ( (mutations) => {
     mutations.forEach(mutation => {
         mutation.addedNodes.forEach(caption => {
-            if (caption instanceof HTMLElement && caption.matches(captionParent)) {
-                processCaption(caption)
+            if (caption instanceof HTMLElement && caption.matches(captionParentTag)) {
+                disectCaption(caption)
             }
         })
     })
 })
 
-function processCaption(caption: HTMLElement) {
-    const captionText = caption.innerText.trim()
-    if (!captionText) return
+// Function to split caption into different parts
+function disectCaption(caption: HTMLElement) {
 
-    message = captionText
+    const captionDialoge = caption.querySelector<HTMLDivElement>(captionIdTag)
+    if (!captionDialoge) return
+
+    const trimmedDialoge = captionDialoge.textContent?.trim() ?? ""
+
+    const speaker = caption.querySelector<HTMLElement>(speakerIdTag)?.textContent?.trim() ?? ""
+
+    message = `${speaker}: ${trimmedDialoge}`
 }
 
 
