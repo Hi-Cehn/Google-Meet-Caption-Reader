@@ -63,12 +63,16 @@ async function sendTranscriptLine(speaker: string) {
         })
 
     message = ""
+    bufferMessage.delete(speaker)
 }
 
 // Function to start scanning the caption element for changes
-function captionScanner(captionElement: HTMLDivElement,speaker: string, dialoge: string) {
+function captionScanner(captionElement: HTMLDivElement, speaker: string) {
     const push = () => {
-        createMessage(speaker, dialoge)
+        const trimmedDialoge = captionElement.textContent?.trim() ?? ''
+        if (duplicateDialogeChecker(speaker, trimmedDialoge)) {
+            createMessage(speaker, trimmedDialoge)
+        }
     }
 
     push()
@@ -81,13 +85,9 @@ function disectCaption(caption: HTMLElement) {
     const captionElement = caption.querySelector<HTMLDivElement>(captionIdTag)
     if (!captionElement) return
 
-    const trimmedDialoge = captionElement.textContent?.trim() ?? ""
-
     const speaker = caption.querySelector<HTMLElement>(speakerIdTag)?.textContent?.trim() ?? ""
 
-    if (!duplicateDialogeChecker(speaker, trimmedDialoge)) return
-
-    captionScanner(captionElement, speaker, trimmedDialoge)
+    captionScanner(captionElement, speaker)
 }
 
 

@@ -6,10 +6,12 @@ function App() {
 
   const startScalping = async () => {
     setIsListening(true)
+    console.log("Listening to scapler.js.")
   }
 
   const stopScalping = async () => {
     setIsListening(false)
+    console.log("Not listening to scapler.js.")
   }
 
   useEffect( () => {
