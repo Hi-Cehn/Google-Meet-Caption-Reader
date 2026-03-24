@@ -20,17 +20,20 @@ captionGroupObserver = new MutationObserver ( (mutations) => {
     })
 })
 
+// Function to revert caption text to lowercase and with no puncuation or unneeded whitespace
 const normalize = (pre: string) =>
   pre.toLowerCase().replace(/[.,?!'"\u2019]/g, "").replace(/\s+/g, " ").trim()
 
+// Function to check if dialoge has changed
 function duplicateDialogeChecker(speaker: string, captionText: string) {
     const baseText = normalize(captionText)
     const prevText = prevCaption.get(speaker)
     if (baseText === prevText) return
-    prevCaption.set(speaker, captionText)
+    prevCaption.set(speaker, baseText)
+    return captionText
 }
 
-// Function to split caption into different parts
+// Function to split caption element into different parts
 function disectCaption(caption: HTMLElement) {
     const captionDialoge = caption.querySelector<HTMLDivElement>(captionIdTag)
     if (!captionDialoge) return
