@@ -1,4 +1,3 @@
-
 // Variables
 let message: string
 let captionParentTag  = '.nMcdL'
@@ -14,7 +13,7 @@ type timedMessageObject = messageObject & { timer: number }
 
 const bufferMessage = new Map<string, timedMessageObject>()
 const prevCaption = new Map<string, string>()
-const messageTimeout = 1500
+const messageTimeout = 2000
 
 
 // Function to revert caption text to lowercase and with no puncuation or unneeded whitespace
@@ -62,6 +61,8 @@ async function sendTranscriptLine(speaker: string) {
             type: "CAPTION_DETECTED",
             data: message
         })
+
+    message = ""
 }
 
 // Function to start scanning the caption element for changes
