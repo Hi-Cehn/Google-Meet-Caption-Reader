@@ -53,15 +53,3 @@ new MutationObserver(() => {
     captionGroupObserver?.observe(captionRegion, { childList: true, subtree: true })
   }
 }).observe(document.body, { childList: true, subtree: true })
-
-
-// =====================
-// Main message listener
-// =====================
-chrome.runtime.onMessage.addListener((msg, _sender, sendResponse) => {
-    if (msg?.type === 'START_SCALPING') {
-        sendResponse(message)
-        message = ""
-        return
-    }
-})
