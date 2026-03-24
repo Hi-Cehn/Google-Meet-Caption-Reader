@@ -16,8 +16,6 @@ const bufferMessage = new Map<string, timedMessageObject>()
 const prevCaption = new Map<string, string>()
 const messageTimeout = 1500
 
-// Observer to find the parent of the caption element to be analyzed for speaker name and speaker caption
-
 
 // Function to revert caption text to lowercase and with no puncuation or unneeded whitespace
 const normalize = (pre: string) =>
@@ -32,6 +30,7 @@ function duplicateDialogeChecker(speaker: string, captionText: string) {
     return true
 }
 
+// Function to create message obejcts and set a timer to wait for updates to them
 function createMessage(speaker: string, dialoge: string) {
     const existingCaption = bufferMessage.get(speaker)
 
@@ -50,9 +49,22 @@ function createMessage(speaker: string, dialoge: string) {
 
     clearTimeout(existingCaption.timer)
     existingCaption.timer = window.setTimeout(() => sendTranscriptLine(speaker), messageTimeout)
-    
 }
 
+async function sendTranscriptLine(speaker: string) {
+    const messageObject = bufferMessage.get(speaker)
+    if (!messageObject) return
+
+    message = `${messageObject.speaker}: ${messageObject.dialoge}`
+
+    chrome.runtime
+        .sendMessage({
+            type: "CAPTION_DETECTED",
+            data: message
+        })
+}
+
+// Function to start scanning the caption element for changes
 function captionScanner(captionElement: HTMLDivElement,speaker: string, dialoge: string) {
     const push = () => {
         createMessage(speaker, dialoge)
