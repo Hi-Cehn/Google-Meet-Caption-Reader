@@ -7,6 +7,8 @@ let captionIdTag = '.ygicle'
 
 let captionGroupObserver: MutationObserver | null = null
 
+let prevCaption = new Map<string, string>()
+
 // Observer to find the parent of the caption element to be analyzed for speaker name and speaker caption
 captionGroupObserver = new MutationObserver ( (mutations) => {
     mutations.forEach(mutation => {
@@ -18,9 +20,18 @@ captionGroupObserver = new MutationObserver ( (mutations) => {
     })
 })
 
+const normalize = (pre: string) =>
+  pre.toLowerCase().replace(/[.,?!'"\u2019]/g, "").replace(/\s+/g, " ").trim()
+
+function duplicateDialogeChecker(speaker: string, captionText: string) {
+    const baseText = normalize(captionText)
+    const prevText = prevCaption.get(speaker)
+    if (baseText === prevText) return
+    prevCaption.set(speaker, captionText)
+}
+
 // Function to split caption into different parts
 function disectCaption(caption: HTMLElement) {
-
     const captionDialoge = caption.querySelector<HTMLDivElement>(captionIdTag)
     if (!captionDialoge) return
 
@@ -28,7 +39,7 @@ function disectCaption(caption: HTMLElement) {
 
     const speaker = caption.querySelector<HTMLElement>(speakerIdTag)?.textContent?.trim() ?? ""
 
-    message = `${speaker}: ${trimmedDialoge}`
+    duplicateDialogeChecker(speaker, trimmedDialoge)
 }
 
 
