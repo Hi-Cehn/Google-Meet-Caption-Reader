@@ -28,9 +28,9 @@ const normalize = (pre: string) =>
 function duplicateDialogeChecker(speaker: string, captionText: string) {
     const baseText = normalize(captionText)
     const prevText = prevCaption.get(speaker)
-    if (baseText === prevText) return
+    if (baseText === prevText) return false
     prevCaption.set(speaker, baseText)
-    return captionText
+    return true
 }
 
 // Function to split caption element into different parts
@@ -42,7 +42,7 @@ function disectCaption(caption: HTMLElement) {
 
     const speaker = caption.querySelector<HTMLElement>(speakerIdTag)?.textContent?.trim() ?? ""
 
-    duplicateDialogeChecker(speaker, trimmedDialoge)
+    if (!duplicateDialogeChecker(speaker, trimmedDialoge)) return
 }
 
 
