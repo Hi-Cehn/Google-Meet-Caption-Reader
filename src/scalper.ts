@@ -15,6 +15,8 @@ const bufferMessage = new Map<string, timedMessageObject>()
 const prevCaption = new Map<string, string>()
 const messageTimeout = 2000
 
+const observedNodes = new WeakSet<HTMLElement>()
+
 
 // Function to revert caption text to lowercase and with no puncuation or unneeded whitespace
 const normalize = (pre: string) =>
@@ -50,7 +52,7 @@ function createMessage(speaker: string, dialoge: string) {
     existingCaption.timer = window.setTimeout(() => sendTranscriptLine(speaker), messageTimeout)
 }
 
-async function sendTranscriptLine(speaker: string) {
+function sendTranscriptLine(speaker: string) {
     const messageObject = bufferMessage.get(speaker)
     if (!messageObject) return
 
@@ -62,6 +64,7 @@ async function sendTranscriptLine(speaker: string) {
             data: message
         })
 
+    clearTimeout(messageObject.timer)
     message = ""
     bufferMessage.delete(speaker)
 }
@@ -82,6 +85,9 @@ function captionScanner(captionElement: HTMLDivElement, speaker: string) {
 
 // Function to split caption element into different parts
 function disectCaption(caption: HTMLElement) {
+    if (observedNodes.has(caption)) return
+    observedNodes.add(caption)
+    
     const captionElement = caption.querySelector<HTMLDivElement>(captionIdTag)
     if (!captionElement) return
 
@@ -98,6 +104,8 @@ new MutationObserver(() => {
   const captionRegion = document.querySelector<HTMLElement>('div[role="region"][aria-label="Captions"]')
   
   if(captionRegion){
+    captionGroupObserver?.disconnect()
+
     captionGroupObserver = new MutationObserver ( (mutations) => {
         mutations.forEach(mutation => {
             mutation.addedNodes.forEach(caption => {
